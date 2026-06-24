@@ -1,22 +1,15 @@
 import { NextResponse } from "next/server";
-
-// Allow the frontend (different origin/port) to call this API.
-// In production set ALLOWED_ORIGIN to your Vercel URL (e.g. https://your-app.vercel.app).
-const corsHeaders = {
-  "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN || "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+import { corsHeaders } from "../../../lib/cors";
 
 // Backend: GET /api/hello
-export async function GET() {
+export async function GET(request) {
   return NextResponse.json(
     { message: "Hello World from the Next.js backend!" },
-    { headers: corsHeaders }
+    { headers: corsHeaders(request) }
   );
 }
 
 // Preflight support
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: corsHeaders });
+export async function OPTIONS(request) {
+  return new NextResponse(null, { status: 204, headers: corsHeaders(request) });
 }

@@ -1,11 +1,5 @@
 import { NextResponse } from "next/server";
-
-// In production set ALLOWED_ORIGIN to your Vercel URL (e.g. https://your-app.vercel.app).
-const corsHeaders = {
-  "Access-Control-Allow-Origin": process.env.ALLOWED_ORIGIN || "*",
-  "Access-Control-Allow-Methods": "GET, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type",
-};
+import { corsHeaders } from "../../../lib/cors";
 
 // Map Open-Meteo weather codes to a human-readable description.
 // https://open-meteo.com/en/docs (WMO weather interpretation codes)
@@ -64,7 +58,7 @@ export async function GET(request) {
     if (!geoData.results || geoData.results.length === 0) {
       return NextResponse.json(
         { error: `City not found: ${city}` },
-        { status: 404, headers: corsHeaders }
+        { status: 404, headers: corsHeaders(request) }
       );
     }
 
@@ -89,16 +83,16 @@ export async function GET(request) {
         condition: WEATHER_CODES[cur.weather_code] || "Unknown",
         observedAt: cur.time,
       },
-      { headers: corsHeaders }
+      { headers: corsHeaders(request) }
     );
   } catch (err) {
     return NextResponse.json(
       { error: "Failed to fetch weather data" },
-      { status: 502, headers: corsHeaders }
+      { status: 502, headers: corsHeaders(request) }
     );
   }
 }
 
-export async function OPTIONS() {
-  return new NextResponse(null, { status: 204, headers: corsHeaders });
+export async function OPTIONS(request) {
+  return new NextResponse(null, { status: 204, headers: corsHeaders(request) });
 }
