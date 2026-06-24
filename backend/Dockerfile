@@ -13,8 +13,10 @@ FROM node:20-alpine AS runner
 WORKDIR /app
 
 ENV NODE_ENV=production
-# Fly routes to this port (see fly.toml internal_port).
+# Platform (Railway/Fly) injects PORT at runtime; this is just a local default.
 ENV PORT=8080
+# Bind to all interfaces so the container is reachable (required by Railway).
+ENV HOSTNAME=0.0.0.0
 
 # Copy the standalone server output produced by `output: "standalone"`.
 COPY --from=builder /app/.next/standalone ./
